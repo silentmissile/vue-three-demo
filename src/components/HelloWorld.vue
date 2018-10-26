@@ -84,60 +84,50 @@ export default {
     this.controls.damping = 0.2
     this.controls.addEventListener('change', this.render)
 
-    this.controls.addEventListener('start', function () {
-      console.log('now start event')
+    this.controls.addEventListener('start', () => {
       this.cancelHideTransform()
     })
 
-    this.controls.addEventListener('end', function () {
-      console.log('now end event')
+    this.controls.addEventListener('end', () => {
       this.delayHideTransform()
     })
     // TransformControls
     this.transformControl = new THREE.TransformControls(this.camera, this.renderer.domElement)
-    this.transformControl.addEventListener('change', function (e) {
+    this.transformControl.addEventListener('change', (e) => {
       this.render()
     })
-    this.transformControl.addEventListener('dragging-changed', function (event) {
+    this.transformControl.addEventListener('dragging-changed', (event) => {
       this.controls.enabled = !event.value
     })
-    console.log('transformControl')
-    console.log(this.transformControl)
-    console.log('cancelHideTransform')
-    console.log(this.cancelHideTransform)
-    console.log('hideTransform')
-    console.log(this.hideTransform)
-    console.log('delayHideTransform')
-    console.log(this.delayHideTransform)
     this.scene.add(this.transformControl)
     // Hiding transform situation is a little in a mess :()
-    this.transformControl.addEventListener('change', function (e) {
+    this.transformControl.addEventListener('change', (e) => {
       this.cancelHideTransform()
     })
 
-    this.transformControl.addEventListener('mouseDown', function (e) {
+    this.transformControl.addEventListener('mouseDown', (e) => {
       this.cancelHideTransform()
     })
 
-    this.transformControl.addEventListener('mouseUp', function (e) {
-      console.log('now mouseup')
+    this.transformControl.addEventListener('mouseUp', (e) => {
       this.delayHideTransform()
     })
 
-    this.transformControl.addEventListener('objectChange', function (e) {
+    this.transformControl.addEventListener('objectChange', (e) => {
       this.updateSplineOutline()
     })
     // DragControls
     this.dragcontrols = new THREE.DragControls(this.splineHelperObjects, this.camera, this.renderer.domElement) //
     this.dragcontrols.enabled = false
-    this.dragcontrols.addEventListener('hoveron', function (event) {
+    this.dragcontrols.addEventListener('hoveron', (event) => {
+      console.log('hoveron')
       this.transformControl.attach(event.object)
       this.cancelHideTransform()
     })
-
-    this.dragcontrols.addEventListener('hoveroff', function (event) {
+    this.dragcontrols.addEventListener('hoveroff', (event) => {
       this.delayHideTransform()
     })
+    console.log(this.dragcontrols)
 
     /*******
     * Curves
@@ -264,7 +254,7 @@ export default {
       this.hideTransform()
     },
     hideTransform () {
-      this.hiding = setTimeout(function () {
+      this.hiding = setTimeout(() => {
         this.transformControl.detach(this.transformControl.object)
       }, 2500)
     },
