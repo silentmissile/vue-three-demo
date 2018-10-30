@@ -120,14 +120,12 @@ export default {
     this.dragcontrols = new THREE.DragControls(this.splineHelperObjects, this.camera, this.renderer.domElement) //
     this.dragcontrols.enabled = false
     this.dragcontrols.addEventListener('hoveron', (event) => {
-      console.log('hoveron')
       this.transformControl.attach(event.object)
       this.cancelHideTransform()
     })
     this.dragcontrols.addEventListener('hoveroff', (event) => {
       this.delayHideTransform()
     })
-    console.log(this.dragcontrols)
 
     /*******
     * Curves
@@ -138,7 +136,6 @@ export default {
       new THREE.Vector3(-383.785318791128, 491.1365363371675, 47.869296953772746) ]
     this.splines = {}
     this.splinePointsLength = this.positions.length
-    this.splineHelperObjects = []
     for (let i = 0; i < this.splinePointsLength; i++) {
       this.addSplineObject(this.positions[ i ])
     }
@@ -248,6 +245,7 @@ export default {
       this.splines.centripetal.mesh.visible = this.params.centripetal
       this.splines.chordal.mesh.visible = this.params.chordal
       this.renderer.render(this.scene, this.camera)
+      requestAnimationFrame(this.render)
     },
     delayHideTransform () {
       this.cancelHideTransform()
@@ -256,7 +254,7 @@ export default {
     hideTransform () {
       this.hiding = setTimeout(() => {
         this.transformControl.detach(this.transformControl.object)
-      }, 2500)
+      }, 500)
     },
     cancelHideTransform () {
       if (this.hiding) clearTimeout(this.hiding)
