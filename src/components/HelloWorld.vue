@@ -79,15 +79,24 @@ export default {
     this.$el.appendChild(this.renderer.domElement)
 
     // Controls
-    // OrbitControls
-    this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement)
-    this.controls.damping = 0.2
-    this.controls.addEventListener('change', this.render)
+    // TrackballControls
+    this.controls = new THREE.TrackballControls(this.camera, this.renderer.domElement)
+    this.controls.rotateSpeed = 1.0
+    this.controls.zoomSpeed = 1.2
+    this.controls.panSpeed = 0.8
 
+    this.controls.noZoom = false
+    this.controls.noPan = false
+
+    this.controls.staticMoving = true
+    this.controls.dynamicDampingFactor = 0.3
+
+    this.controls.keys = [ 65, 83, 68 ]
+
+    this.controls.addEventListener('change', this.render)
     this.controls.addEventListener('start', () => {
       this.cancelHideTransform()
     })
-
     this.controls.addEventListener('end', () => {
       this.delayHideTransform()
     })
@@ -180,6 +189,7 @@ export default {
     }
     this.updateSplineOutline()
     this.render()
+    this.animate()
   },
   methods: {
     addSplineObject (position) {
@@ -245,7 +255,7 @@ export default {
       this.splines.centripetal.mesh.visible = this.params.centripetal
       this.splines.chordal.mesh.visible = this.params.chordal
       this.renderer.render(this.scene, this.camera)
-      requestAnimationFrame(this.render)
+      // requestAnimationFrame(this.render)
     },
     delayHideTransform () {
       this.cancelHideTransform()
@@ -258,6 +268,10 @@ export default {
     },
     cancelHideTransform () {
       if (this.hiding) clearTimeout(this.hiding)
+    },
+    animate () {
+      requestAnimationFrame(this.animate)
+      this.controls.update()
     }
   }
 }

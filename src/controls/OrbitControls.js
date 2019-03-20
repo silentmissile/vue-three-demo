@@ -12,7 +12,7 @@ const THREE = require('three')
 //
 //    Orbit - left mouse / touch: one-finger move
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
-//    Pan - right mouse, or left mouse + ctrl/metaKey, or arrow keys / touch: two-finger move
+//    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
 
 THREE.OrbitControls = function (object, domElement) {
   this.object = object
@@ -185,8 +185,8 @@ THREE.OrbitControls = function (object, domElement) {
       // using small-angle approximation cos(x/2) = 1 - x^2 / 8
 
       if (zoomChanged ||
-                lastPosition.distanceToSquared(scope.object.position) > EPS ||
-                8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS) {
+    lastPosition.distanceToSquared(scope.object.position) > EPS ||
+    8 * (1 - lastQuaternion.dot(scope.object.quaternion)) > EPS) {
         scope.dispatchEvent(changeEvent)
 
         lastPosition.copy(scope.object.position)
@@ -214,7 +214,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     window.removeEventListener('keydown', onKeyDown, false)
 
-    // scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
+  // scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
   }
 
   //
@@ -359,25 +359,25 @@ THREE.OrbitControls = function (object, domElement) {
   //
 
   function handleMouseDownRotate (event) {
-    // console.log( 'handleMouseDownRotate' );
+  // console.log( 'handleMouseDownRotate' );
 
     rotateStart.set(event.clientX, event.clientY)
   }
 
   function handleMouseDownDolly (event) {
-    // console.log( 'handleMouseDownDolly' );
+  // console.log( 'handleMouseDownDolly' );
 
     dollyStart.set(event.clientX, event.clientY)
   }
 
   function handleMouseDownPan (event) {
-    // console.log( 'handleMouseDownPan' );
+  // console.log( 'handleMouseDownPan' );
 
     panStart.set(event.clientX, event.clientY)
   }
 
   function handleMouseMoveRotate (event) {
-    // console.log( 'handleMouseMoveRotate' );
+  // console.log( 'handleMouseMoveRotate' );
 
     rotateEnd.set(event.clientX, event.clientY)
 
@@ -395,7 +395,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleMouseMoveDolly (event) {
-    // console.log( 'handleMouseMoveDolly' );
+  // console.log( 'handleMouseMoveDolly' );
 
     dollyEnd.set(event.clientX, event.clientY)
 
@@ -413,7 +413,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleMouseMovePan (event) {
-    // console.log( 'handleMouseMovePan' );
+  // console.log( 'handleMouseMovePan' );
 
     panEnd.set(event.clientX, event.clientY)
 
@@ -428,12 +428,12 @@ THREE.OrbitControls = function (object, domElement) {
 
   function handleMouseUp (event) {
 
-    // console.log( 'handleMouseUp' );
+  // console.log( 'handleMouseUp' );
 
   }
 
   function handleMouseWheel (event) {
-    // console.log( 'handleMouseWheel' );
+  // console.log( 'handleMouseWheel' );
 
     if (event.deltaY < 0) {
       dollyOut(getZoomScale())
@@ -445,39 +445,48 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleKeyDown (event) {
-    // console.log( 'handleKeyDown' );
+  // console.log( 'handleKeyDown' );
+
+    var needsUpdate = false
 
     switch (event.keyCode) {
       case scope.keys.UP:
         pan(0, scope.keyPanSpeed)
-        scope.update()
+        needsUpdate = true
         break
 
       case scope.keys.BOTTOM:
         pan(0, -scope.keyPanSpeed)
-        scope.update()
+        needsUpdate = true
         break
 
       case scope.keys.LEFT:
         pan(scope.keyPanSpeed, 0)
-        scope.update()
+        needsUpdate = true
         break
 
       case scope.keys.RIGHT:
         pan(-scope.keyPanSpeed, 0)
-        scope.update()
+        needsUpdate = true
         break
+    }
+
+    if (needsUpdate) {
+      // prevent the browser from scrolling on cursor keys
+      event.preventDefault()
+
+      scope.update()
     }
   }
 
   function handleTouchStartRotate (event) {
-    // console.log( 'handleTouchStartRotate' );
+  // console.log( 'handleTouchStartRotate' );
 
     rotateStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
   }
 
   function handleTouchStartDollyPan (event) {
-    // console.log( 'handleTouchStartDollyPan' );
+  // console.log( 'handleTouchStartDollyPan' );
 
     if (scope.enableZoom) {
       var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX
@@ -497,7 +506,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleTouchMoveRotate (event) {
-    // console.log( 'handleTouchMoveRotate' );
+  // console.log( 'handleTouchMoveRotate' );
 
     rotateEnd.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
 
@@ -515,7 +524,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleTouchMoveDollyPan (event) {
-    // console.log( 'handleTouchMoveDollyPan' );
+  // console.log( 'handleTouchMoveDollyPan' );
 
     if (scope.enableZoom) {
       var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX
@@ -550,7 +559,7 @@ THREE.OrbitControls = function (object, domElement) {
 
   function handleTouchEnd (event) {
 
-    // console.log( 'handleTouchEnd' );
+  // console.log( 'handleTouchEnd' );
 
   }
 
@@ -561,12 +570,19 @@ THREE.OrbitControls = function (object, domElement) {
   function onMouseDown (event) {
     if (scope.enabled === false) return
 
+    // Prevent the browser from scrolling.
+
     event.preventDefault()
+
+    // Manually set the focus since calling preventDefault above
+    // prevents the browser from setting it automatically.
+
+    scope.domElement.focus ? scope.domElement.focus() : window.focus()
 
     switch (event.button) {
       case scope.mouseButtons.LEFT:
 
-        if (event.ctrlKey || event.metaKey) {
+        if (event.ctrlKey || event.metaKey || event.shiftKey) {
           if (scope.enablePan === false) return
 
           handleMouseDownPan(event)
